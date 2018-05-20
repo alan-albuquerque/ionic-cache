@@ -1,7 +1,13 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CacheService, CacheConfig } from './cache.service';
-import { IonicStorageModule, Storage } from '@ionic/storage';
-import { CacheStorageService } from './cache-storage.service';
+import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
+import { CacheService } from './cache.service';
+import { IonicStorageModule } from '@ionic/storage';
+import { Config, factoryConfig } from './config';
+
+export interface CacheModuleConfig {
+  keyPrefix?: string;
+}
+
+export const CacheModuleConfigToken = new InjectionToken<CacheModuleConfig>('CacheModuleConfigToken');
 
 @NgModule({
   imports: [
@@ -12,19 +18,15 @@ import { CacheStorageService } from './cache-storage.service';
   ]
 })
 export class CacheModule {
-  static forRoot(cacheConfig?: CacheConfig): ModuleWithProviders {
-    cacheConfig = Object.assign({ keyPrefix: '' }, cacheConfig);
+  static forRoot(config: CacheModuleConfig = {}): ModuleWithProviders {
     return {
       ngModule: CacheModule,
       providers: [
-        {
-          provide: CacheService,
-          useFactory: (storage: Storage) => {
-            return new CacheService(new CacheStorageService(storage, cacheConfig.keyPrefix));
-          },
-          deps: [Storage]
-        }
+        CacheService,
+        {provide: CacheModuleConfigToken, useValue: config},
+        {provide: Config, useFactory: factoryConfig, deps: [CacheModuleConfigToken]},
       ]
     };
   }
 }
+

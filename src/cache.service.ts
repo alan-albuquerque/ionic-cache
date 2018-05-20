@@ -11,10 +11,6 @@ import { catchError } from 'rxjs/operators/catchError';
 import { defer } from 'rxjs/observable/defer';
 import { CacheStorageService, StorageCacheItem } from './cache-storage.service';
 
-export interface CacheConfig {
-  keyPrefix?: string;
-}
-
 export const MESSAGES = {
   0: 'Cache initialization error: ',
   1: 'Cache is not enabled.',
@@ -94,7 +90,7 @@ export class CacheService {
     let items = await this._storage.all();
     return Promise.all(
       items
-      .map(item => this.removeItem(item.key))
+        .map(item => this.removeItem(item.key))
     );
   }
 
@@ -201,9 +197,9 @@ export class CacheService {
 
     return Promise.all(
       items
-      .map(item => item.key)
-      .filter(key => key && regex.test(key))
-      .map(key => this.removeItem(key))
+        .map(item => item.key)
+        .filter(key => key && regex.test(key))
+        .map(key => this.removeItem(key))
     );
   }
 
@@ -433,8 +429,8 @@ export class CacheService {
 
     return Promise.all(
       items
-      .filter(item => item.expires < datetime)
-      .map(item => this.removeItem(item.key))
+        .filter(item => item.expires < datetime)
+        .map(item => this.removeItem(item.key))
     );
   }
 
@@ -452,8 +448,8 @@ export class CacheService {
 
     return Promise.all(
       items
-      .filter(item => item.groupKey === groupKey)
-      .map(item => this.removeItem(item.key))
+        .filter(item => item.groupKey === groupKey)
+        .map(item => this.removeItem(item.key))
     );
   }
 

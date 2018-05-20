@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { Config } from './config';
 
 export interface StorageCacheItem {
   key: string;
@@ -11,11 +12,13 @@ export interface StorageCacheItem {
 
 @Injectable()
 export class CacheStorageService {
+  private readonly keyPrefix: string;
+
   constructor(
     private storage: Storage,
-    private keyPrefix: string
+    private config: Config,
   ) {
-
+    this.keyPrefix = config.keyPrefix;
   }
 
   public ready() {
@@ -38,7 +41,7 @@ export class CacheStorageService {
     await this.ready();
 
     let value = await this.storage.get(this.buildKey(key));
-    return !!value ? Object.assign({ key: key }, value) : null;
+    return !!value ? Object.assign({key: key}, value) : null;
   }
 
   public async exists(key: string) {
@@ -53,7 +56,7 @@ export class CacheStorageService {
     let items: StorageCacheItem[] = [];
     await this.storage.forEach((val: any, key: string) => {
       if (this.isCachedItem(key, val)) {
-        items.push(Object.assign({ key: this.debuildKey(key) }, val));
+        items.push(Object.assign({key: this.debuildKey(key)}, val));
       }
     });
 
